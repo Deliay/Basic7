@@ -25,4 +25,9 @@
       <Filter>Symbols</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Symbols\Type.cpp">
+      <Filter>Symbols</Filter>
+    </ClCompile>
+  </ItemGroup>
 </Project>

@@ -23,6 +23,9 @@
     <ClInclude Include="Symbols\Tags.h" />
     <ClInclude Include="Symbols\Tokens.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Symbols\Type.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{CECF5F44-841B-4140-BD62-1B7AA306112A}</ProjectGuid>
     <RootNamespace>Basic7</RootNamespace>

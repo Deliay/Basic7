@@ -27,7 +27,7 @@ namespace Basic7
 			Token() = delete;
 
 			/// ToString for child output
-			inline virtual std::string& ToString() { return std::string((char *)&TokenTag); };
+			inline virtual std::string ToString() { return std::string((char *)&TokenTag); };
 			
 		};
 
@@ -39,7 +39,7 @@ namespace Basic7
 			Number(int v, int line) : Token(Tag::NUMBER, line), Value(v) {}
 			Number() = delete;
 
-			inline std::string& ToString() override
+			inline std::string ToString() override
 			{
 				std::stringstream ss;
 				ss << Value;
@@ -54,7 +54,7 @@ namespace Basic7
 			std::string lexeme;
 			Word(const Tag& tag, const std::string& s, int line) : Token(tag, line), lexeme(s) {}
 			Word() = delete;
-			inline std::string& ToString() override
+			inline std::string ToString() override
 			{
 				return lexeme;
 			}
@@ -99,6 +99,13 @@ namespace Basic7
 			/// 2 for half, 4 for single, 8 for double
 			Real(double val, int line, int width = 8) : Token(Tag::REAL, line), Value(val), Width(width) {};
 			Real() = delete;
+
+			inline std::string ToString() override
+			{
+				std::stringstream ss;
+				ss << Value;
+				return ss.str();
+			}
 		};
 
 		class Type : public Word
@@ -120,13 +127,13 @@ namespace Basic7
 			ReserveType(const VarType& type, const Tag& tag, int width) : Type(type, tag, width, 0) {};
 			ReserveType() = delete;
 
-			bool ExceptType(const Type& t, const std::initializer_list<Type>& list);
-			bool IsBoolean(const Type& t);
-			bool IsNumberic(const Type& t);
-			bool IsInteger(const Type& t);
-			bool IsFloat(const Type& t);
-			const Type& Max(const Type& t1, const Type& t2);
-			bool CovertableT1T2(const Type& t1, const Type& t2);
+			static bool ExceptType(const Type& t, const std::initializer_list<Type>& list);
+			static bool IsBoolean(const Type& t);
+			static bool IsNumberic(const Type& t);
+			static bool IsInteger(const Type& t);
+			static bool IsFloat(const Type& t);
+			static const Type& Max(const Type& t1, const Type& t2);
+			static bool CovertableT1T2(const Type& t1, const Type& t2);
 
 		};
 
@@ -141,8 +148,26 @@ namespace Basic7
 		class Array : public Type
 		{
 		public:
+			const Type ArrType;
+			const int Size = 0;
 
+			Array(const Type& type, int size) : Type("[]", Tag::ARRAY, type.Width, 0), Size(size), ArrType(type) {};
+			Array() = delete;
+
+			inline std::string ToString() override
+			{
+				std::stringstream ss;
+				ss << ArrType.lexeme << "[" << Size << "]";
+				return ss.str();
+			}
+
+			inline static bool IsArray(const Type& t)
+			{
+				return t.TokenTag == Tag::ARRAY;
+			}
 		};
+
+
 	}
 
 }
