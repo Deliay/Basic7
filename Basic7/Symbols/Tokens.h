@@ -1,6 +1,13 @@
 #pragma once
 #include <sstream>
 #include "Tags.h"
+#ifdef _WIN32
+#include <Windows.h>
+#undef FALSE
+#undef TRUE
+#undef EOF
+#undef OPTIONAL
+#endif // _WIN32
 
 ///³ÌÐò±£Áô¹Ø¼ü×Ö
 #define RESWORD(NAME, TAG, WORD) const ReserveWord NAME(TAG, WORD)
@@ -20,30 +27,62 @@ namespace Basic7
 			const Tag TokenTag;
 			///token line, 0 for reserve
 			const int Line;
+			///name for identity
+			//const std::string Name;
 
 			//disable nav for default constructor
 			///initial Toekn with spificy tag, line
 			Token(const Tag& tag, int line) : TokenTag(tag), Line(line) {};
+			//Token(const Tag& tag, const std::string & name, int line) : TokenTag(tag), Line(line), Name(name) {};
 			Token() = delete;
 
-			/// ToString for child output
-			inline virtual std::string ToString() { return std::string((char *)&TokenTag); };
+			//bool operator== (const Token& tok) { return TokenTag == tok.TokenTag && Line == tok.Line; };
+
+			virtual operator std::string() const
+			{
+				return std::string((char *)&TokenTag);
+			}
+
+			inline long AddRef() volatile
+			{
+#ifdef _WIN32 
+				return InterlockedIncrement(&refcount);
+#endif
+			}
+
+			inline long Release() volatile
+			{
+#ifdef _WIN32
+				if (auto ret = InterlockedDecrement(&refcount))
+#endif
+				{
+					return ret;
+				}
+				delete this;
+				return 0;
+			}
+
+
+		protected:
+			volatile long refcount = 1;
 			
 		};
+
+		static Token Null = { Tag::TAG_NULL, 0 };
 
 		class Number : public Token
 		{
 		public:
-			const int Value = 0;
+			const unsigned int Value = 0;
 
-			Number(int v, int line) : Token(Tag::NUMBER, line), Value(v) {}
+			Number(unsigned int v, int line) : Token(Tag::NUMBER, line), Value(v) {}
 			Number() = delete;
 
-			inline std::string ToString() override
+			operator std::string() const override
 			{
-				std::stringstream ss;
-				ss << Value;
-				return ss.str();
+				char buffer[10];
+				_ultoa_s(Value, buffer, 10);
+				return buffer;
 			}
 
 		};
@@ -54,7 +93,7 @@ namespace Basic7
 			std::string lexeme;
 			Word(const Tag& tag, const std::string& s, int line) : Token(tag, line), lexeme(s) {}
 			Word() = delete;
-			inline std::string ToString() override
+			operator std::string() const override
 			{
 				return lexeme;
 			}
@@ -68,10 +107,10 @@ namespace Basic7
 			ReserveWord() = delete;
 		};
 
-		RESWORD(True, Tag::TRUE, "True"); RESWORD(False, Tag::FALSE, "False");
-		RESWORD(And, Tag::AND, "&&"); RESWORD(Or, Tag::OR, "||");
-		RESWORD(Eqv, Tag::EQV, "=="); RESWORD(NEqv, Tag::NEQV, "!=");
-		RESWORD(LessEq, Tag::LESEQ, "<="); RESWORD(LargeEq, Tag::LARGEEQ, ">=");
+		RESWORD(True, Tag::TRUE, "true");	RESWORD(False, Tag::FALSE, "false");
+		RESWORD(And, Tag::AND, "&&");		RESWORD(Or, Tag::OR, "||");
+		RESWORD(Eqv, Tag::EQV, "==");		RESWORD(NEqv, Tag::NEQV, "!=");
+		RESWORD(LessEq, Tag::LESEQ, "<=");	RESWORD(LargeEq, Tag::LARGEEQ, ">=");
 		RESWORD(Minus, Tag::MINUS, "minus");
 
 		class Operator : public Word
@@ -100,11 +139,11 @@ namespace Basic7
 			Real(double val, int line, int width = 8) : Token(Tag::REAL, line), Value(val), Width(width) {};
 			Real() = delete;
 
-			inline std::string ToString() override
+			operator std::string() const override
 			{
-				std::stringstream ss;
-				ss << Value;
-				return ss.str();
+				char buffer[32];
+				_fcvt_s(buffer, Value, 15, nullptr, nullptr);
+				return buffer;
 			}
 		};
 
@@ -137,12 +176,12 @@ namespace Basic7
 
 		};
 
-		RESTYPE(Int8, 1); RESTYPE(Int16, 2); RESTYPE(Int32, 4); RESTYPE(Int64, 8);
-		RESTYPE(UInt8, 1); RESTYPE(UInt16, 2); RESTYPE(UInt32, 4); RESTYPE(UInt64, 8);
-		RESTYPE(Half, 2); RESTYPE(Single, 4); RESTYPE(Double, 8); RESTYPE(DoubleEx, 10);
+		RESTYPE(Int8, 1);	RESTYPE(Int16, 2);	RESTYPE(Int32, 4);	RESTYPE(Int64, 8);
+		RESTYPE(UInt8, 1);	RESTYPE(UInt16, 2); RESTYPE(UInt32, 4); RESTYPE(UInt64, 8);
+		RESTYPE(Half, 2);	RESTYPE(Single, 4); RESTYPE(Double, 8); RESTYPE(DoubleEx, 10);
 		RESTYPE(IntPtr, 4); RESTYPE(UIntPtr, 4);
-		RESTYPE(Bool8, 1); RESTYPE(Bool16, 2); RESTYPE(Bool32, 4);
-		RESTYPE(Char, 2); RESTYPE(Byte, 1); RESTYPE(Void, 0);
+		RESTYPE(Bool8, 1);	RESTYPE(Bool16, 2); RESTYPE(Bool32, 4);
+		RESTYPE(Char, 2);	RESTYPE(Byte, 1);	RESTYPE(Void, 0);
 		RESTYPET(Function, Tag::FUNCTION, 4);
 
 		class Array : public Type
@@ -154,7 +193,7 @@ namespace Basic7
 			Array(const Type& type, int size) : Type("[]", Tag::ARRAY, type.Width, 0), Size(size), ArrType(type) {};
 			Array() = delete;
 
-			inline std::string ToString() override
+			operator std::string() const override
 			{
 				std::stringstream ss;
 				ss << ArrType.lexeme << "[" << Size << "]";

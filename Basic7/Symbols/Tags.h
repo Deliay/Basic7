@@ -22,10 +22,10 @@ namespace Basic7
 			Multi = '*',
 			Div = '/',
 			Mod = '%',
-			LeftBra = '[', RightBar = ']',
+			LeftBar = '[', RightBar = ']',
 			LeftPar = '(', RightPar = ')',
 			LeftBlock = '{', RightBlock = '}',
-			TAG_START = 256,
+			TAG_START = 256, TAG_NULL,
 			NUMBER,             //Number(Integer)
 			REAL,               //Floats
 			ARRAY,              //Array
@@ -33,7 +33,7 @@ namespace Basic7
 			TRUE,               //TRUE Flag
 			FALSE,              //FALSE Flag
 			IF, ELSE, ELSEIF, THEN,
-			DO, WHILE, UNTIL, WEND, BREAK, CONTINUE,
+			DO, WHILE, UNTIL, WEND, BREAK, CONTINUE, LOOP,
 			STATIC, CLASS, FUNCTION, SUB, RETURN, OPTIONAL,
 			AND, OR, EQV, NEQV, LESEQ, LARGEEQ,
 			MINUS,
@@ -45,13 +45,44 @@ namespace Basic7
 			TAG_END,			//TAG RANGE
 		};
 
-		///Operators 标志运算符优先级(暂时不用)
+		const std::initializer_list<Tag> ExistTags = { Tag::PROGRAM_END,
+			Tag::LINE_END,
+			Tag::BitAnd,
+			Tag::Split,
+			Tag::BitOr,
+			Tag::Equal,
+			Tag::Not,
+			Tag::Less,
+			Tag::Large,
+			Tag::BitNot,
+			Tag::Add,
+			Tag::Sub,
+			Tag::Multi,
+			Tag::Div,
+			Tag::Mod,
+			Tag::LeftBar,
+			Tag::LeftPar,
+			Tag::LeftBlock,
+			Tag::RightBar,
+			Tag::RightPar,
+			Tag::RightBlock,
+		};
+
+		inline static bool CheckTag(const Tag& tag)
+		{
+			for (auto item : Symbols::ExistTags) if (item == tag) return true;
+			if (tag > Tag::TAG_START && tag < Tag::TAG_END) return true;
+
+			return false;
+		}
+
+		///Operators 标志运算符(带优先级
 		enum class Operators : int
 		{
 			Group3 = 30,
 			Mod,
 			Div = Mod,
-			Mul = Mod,
+			Multi = Mod,
 			Add,
 			Sub = Add,
 			SHL,
@@ -104,7 +135,7 @@ namespace Basic7
 			Const,
 		};
 
-#define VARTYPENAME(TAG) VarTypeStr[(int)TAG]
+#define VARTYPENAME(TAG) Symbols::VarTypeStr[(int)TAG]
 
 		const std::string VarTypeStr[] = { 
 			"Void",
