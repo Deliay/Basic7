@@ -396,12 +396,12 @@ namespace Basic7
 		class Expr : public Node
 		{
 		public:
-			Expr(Token tok, Type p) : Node(tok.Line), op(tok), type(p) {};
+			Expr(Token * tok, Type * p) : Node(tok->Line), op(tok), type(p) {};
 			Expr() = delete;
-			inline Token Op() { return op; };
-			inline Type getType() { return type; };
-			virtual Expr* gen() { return this; };
-			virtual Expr* reduce() { return this; };
+			inline Token * Op() { return op; };
+			inline Type * getType() { return type; };
+			virtual Expr * gen() { return this; };
+			virtual Expr * reduce() { return this; };
 			virtual void jumping(int t, int f) { emitjumps(this, t, f); };
 			virtual void emitjumps(const Expr * s, int truejump, int falsejump)
 			{
@@ -419,17 +419,17 @@ namespace Basic7
 					//ifFalse Expr Goto FalseJump
 				}
 			};
-			virtual operator std::string() { return op; };
+			virtual operator std::string() { return *op; };
 
 		private:
-			Token op;
-			Symbols::Type type;
+			Token * op;
+			Symbols::Type * type;
 		};
 
 		class Id : public Expr
 		{
 		public:
-			Id(Word * idTok, SymbolTable * t, Type type, int Offset, bool Static) : 
+			Id(Word * idTok, SymbolTable * t, Type * type, int Offset, bool Static) : 
 				Expr(idTok, type), offset_(Offset), static_(Static), id_(idTok), scope_(t) {};
 			
 			inline int varoffset() { return offset_; }
