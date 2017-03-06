@@ -1,43 +1,36 @@
 #include "LexicalAnalyzer.h"
 
-namespace Basic7
+char Basic7::Lexer::Reader::Read()
 {
-	namespace Lexer
+	if (curPos < src.length())
 	{
-		char Basic7::Lexer::Reader::Read()
+		char ch = src[curPos++];
+		if (ch == '\r' || ch == '\n')
 		{
-			if (curPos < src.length())
+			if (src[curPos] == '\n')
 			{
-				char ch = src[curPos++];
-				if (ch == '\r' || ch == '\n')
-				{
-					if (src[curPos] == '\n')
-					{
-						ch = src[curPos];
-						curPos++;
-					}
-					curLine++;
-					curLinePos = 0;
-				}
-				else
-				{
-					curLinePos++;
-				}
-
-				return ch;
+				ch = src[curPos];
+				curPos++;
 			}
-			else return '\0';
+			curLine++;
+			curLinePos = 0;
 		}
-
-		void Reader::Back()
+		else
 		{
-			curPos--;
+			curLinePos++;
 		}
 
-		bool Reader::IsEnd()
-		{
-			return curPos + 1 >= src.length();
-		}
-
+		return ch;
 	}
+	else return '\0';
+}
+
+void Basic7::Lexer::Reader::Back()
+{
+	curPos--;
+}
+
+bool Basic7::Lexer::Reader::IsEnd()
+{
+	return curPos + 1 >= src.length();
 }

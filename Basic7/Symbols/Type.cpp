@@ -1,4 +1,4 @@
-#include "Tokens.h"
+#include "Symbols.h"
 
 bool Basic7::Symbols::Type::operator==(const Type & t) const
 {

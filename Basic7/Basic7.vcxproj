@@ -19,10 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="IntermediaCode\Generator.h" />
     <ClInclude Include="Lexer\LexicalAnalyzer.h" />
-    <ClInclude Include="Symbols\SymbolTable.h" />
-    <ClInclude Include="Symbols\Tags.h" />
-    <ClInclude Include="Symbols\Tokens.h" />
+    <ClInclude Include="Parser\Parser.h" />
+    <ClInclude Include="Symbols\Symbols.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Lexer\LexicalAnalyzer.cpp" />

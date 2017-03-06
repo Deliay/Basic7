@@ -18,13 +18,13 @@
     <ClInclude Include="Lexer\LexicalAnalyzer.h">
       <Filter>Lexer</Filter>
     </ClInclude>
-    <ClInclude Include="Symbols\Tags.h">
-      <Filter>Symbols</Filter>
+    <ClInclude Include="Parser\Parser.h">
+      <Filter>Parser</Filter>
     </ClInclude>
-    <ClInclude Include="Symbols\Tokens.h">
-      <Filter>Symbols</Filter>
+    <ClInclude Include="IntermediaCode\Generator.h">
+      <Filter>IntermediaCode</Filter>
     </ClInclude>
-    <ClInclude Include="Symbols\SymbolTable.h">
+    <ClInclude Include="Symbols\Symbols.h">
       <Filter>Symbols</Filter>
     </ClInclude>
   </ItemGroup>

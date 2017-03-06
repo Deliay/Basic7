@@ -6,7 +6,7 @@ int main()
 {
 	Lexer::LexerAnalyer lexer = {};
 
-	FILE *file = fopen(R"(F:\Projects\Basic7\Debug\test.vb7)", "r");
+	FILE *file = fopen(R"(D:\Git\Basic7\x64\Debug\test.b7)", "r");
 	fseek(file, 0, SEEK_END);
 	size_t fileSize = ftell(file);
 	fseek(file, 0, SEEK_SET);

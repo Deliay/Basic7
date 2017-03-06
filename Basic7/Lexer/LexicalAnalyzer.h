@@ -2,7 +2,7 @@
 #include <vector>
 #include <utility>
 #include <map>
-#include "..\Symbols\Tokens.h"
+#include "..\Symbols\Symbols.h"
 
 #define RESTOKEN(T) {HashSeq(T), T}
 #define RESTOKEN_WORD(T, S) {HashSeq(S), ReserveWord(T,S)}
