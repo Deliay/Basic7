@@ -463,7 +463,7 @@ namespace Basic7
 			int _after = 0, _before = 0;
 		};
 
-		const Stmt * Null = nullptr;
+		static const Stmt * Null = nullptr;
 		static Stmt * Encloseing = nullptr;
 		static Stmt * LastFunction = nullptr;
 
